@@ -1,0 +1,99 @@
+---
+title: "Coursera Statistical Inference Project - Part 2"
+author: "Father Abraham"
+date: "13/09/2014"
+output: pdf_document
+---
+
+**Part 2**
+
+In this part of we're going to analyze the ToothGrowth data in the R datasets package.  Load the datasets package into the variable "tg" and do some exploratory data analysis:
+
+```{r echo=FALSE, message=FALSE, error=FALSE, warning=FALSE}
+data(ToothGrowth)
+tg=ToothGrowth
+```
+
+```{r echo=FALSE, message=FALSE, error=FALSE, warning=FALSE}
+library(ggplot2)
+library(sqldf)
+library(ggthemes)
+```
+
+```{r message=FALSE, error=FALSE, warning=FALSE}
+str(tg)
+sqldf("select count(supp) from tg group by supp")
+```
+
+The last result is useful, as we now have the same sample size for each supplement, so we can use the t.test() function and replicate Student's sleep study.  Break down the distribution of length by dose:
+
+```{r}
+g <- ggplot(data=tg, aes(x=len)) + geom_bar(colour="black", stat="bin", fill="#DD8888", binwidth=0.5) 
+g <- g + facet_grid(dose ~ .) + xlab("Length") + ylab("Count")
+g <- g + ggtitle("Count of length of toothgrowth by dose (0.5, 1.0 or 2.0")
+g <- g + theme_economist()
+g
+```
+
+Break down the distribution of length by supplement:
+
+```{r}
+g <- ggplot(data=tg, aes(x=len)) + geom_bar(colour="black", stat="bin", fill="#DD8888", binwidth=0.5) + facet_grid(supp ~ .) + xlab("Length") + ylab("Count")
+g <- g + ggtitle("Count of length of toothgrowth by supplement (OJ or VC)")
+g <- g + theme_economist()
+g
+```
+
+Provide a basic summary of the data:  
+
+```{r}
+summary(tg)
+```
+
+In simple terms, it is a small dataset of two supplements at different dosages and documents tooth growth over these two dimensions.  Exploratory data analysis suggests that dosage *could very much* be influential and the supplement *may* be influential.   
+
+Let us create a null hypothesis H0:  Dosage has no influence on tooth growth.  We then use the t.test() function to evaluate length versus dose:
+
+```{r}
+t.test(tg$len, tg$dose)
+```
+
+With such a low p-value, the null hypothesis must go, that means we must accept the alternative hypothesis Ha: Dosage does have an influence on tooth growth.
+
+Let us create another null hypothesis H0:  The supplement has no influence on tooth growth.
+
+```{r}
+t.test(len ~ supp, data=tg)
+```
+
+The p-value is higher than 0.05 - suggesting this hypothesis holds; just!  That means the alternative hypothesis is rejected and we retain the null hypothesis: the supplement has no impact on tooth growth.
+
+**Conclusions**
+
+The following assumptions were made:
+1. We assume data is *roughly* symmetric and mound shaped - something exploratory data analysis suggests.
+2. We *assume* the groups are independent - and *know* the sample sizes are equal, therefore we can use Gosset's T-test.
+
+The conclusions is clear: if you want to improve tooth growth, it doesn't matter whether you take "OJ" or "VC" as your supplement, just make sure the dose is large!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
