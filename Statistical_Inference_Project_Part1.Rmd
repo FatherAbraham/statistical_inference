@@ -46,10 +46,10 @@ The variance:
 var(dat1000$Means)
 ```
 
-The standard deviation is:
+The theoretical variance of the sampling distribution is given by the square of the standard deviation of the population divided by the sample size:
 
 ```{r}
-sqrt(var(dat1000$Means))
+((1/lambda)^2)/obs
 ```
 
 Next, we plot the normal distribution on top, we know the mean is 5 from 1/lambda, so we will use that (i.e. we won't *fully* standardize, by centering the mean on 0), and for a standard normal distribution the standard deviation is 1 (Source: http://en.wikipedia.org/wiki/Normal_distribution) 
