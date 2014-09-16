@@ -13,7 +13,7 @@ The first task of the project is to "[i]llustrate via simulation and associated 
 ##set seed for predictable random numbers (!)
 set.seed(23)
 
-##satisfy project requirements, i.e. run 1000 simulations of sample size n=40
+##satisfy project requirements
 sims=1000
 lambda=0.2
 obs=40
@@ -23,9 +23,7 @@ dat1000 <- as.data.frame(replicate(sims, mean(rexp(obs, lambda))))
 names(dat1000) <- c("Means")
 ```
 
-This has produced the sampling distribution of the sample mean.
-
-With the data in place we will now plot the distribution as a histogram using the following code, and we add a line to show where the distribution is centered - very close to 5, and where we would expect it, as the Central Limit Theorem tells us for a large enough number, the sample mean will converge on the population mean (which we know to be 5):
+With the data in place we will now plot the distribution as a histogram using the following code, and we add a line to show where the distribution is centered - very close to 5.:
 
 ```{r echo=FALSE}
 library(ggplot2)
@@ -34,11 +32,11 @@ g <- ggplot(dat1000, aes(x=Means)) + geom_histogram(aes(y=..density..), binwidth
 g <- g + ggtitle("Average of Distributions")
 g <- g + xlab("Mean") + ylab("Density")
 g <- g + theme_economist()
-g <- g + geom_vline(aes(xintercept=mean(dat1000$Means)), color="blue", linetype="dashed", size=1)
+g <- g + geom_vline(aes(xintercept=mean(dat$Means)), color="blue", linetype="dashed", size=1)
 g
 ```
 
-Let's have a look at some other properties of the sampling distribution:  
+Let's have a look at some other properties of the original distribution.  
 
 The variance:
 
@@ -46,37 +44,26 @@ The variance:
 var(dat1000$Means)
 ```
 
-The standard deviation is:
+The theoretical variance is:
+
+???
+
+The standard deviation:
 
 ```{r}
 sqrt(var(dat1000$Means))
 ```
 
+
 Next, we plot the normal distribution on top, we know the mean is 5 from 1/lambda, so we will use that (i.e. we won't *fully* standardize, by centering the mean on 0), and for a standard normal distribution the standard deviation is 1 (Source: http://en.wikipedia.org/wiki/Normal_distribution) 
 
-```{r}
+```{r fig.height=50, fig.width=50, fig.cap="Histogram with Normal Distribution"}
 g <- g + stat_function(fun = dnorm, colour = "red", arg = list(mean=5, sd =1))
 g
 ```
 
-Clearly, the distribution is very close to a normal distribution, and we have demonstrated that the Central Limit Theorem holds here.
 
-The confidence level has both and an upper limit which we create from the population parameters we know, namely the mean and the standard deviation:
+Clearly, the distribution is very close to a normal distribution, and we have demonstrated that the Central Limit Theorem is not refuted here.
 
-```{r}
-1/lambda + (c(-2, 2)*(1/lambda)/sqrt(40))
-```
-
-
-```{r echo=FALSE, error=FALSE, warning=FALSE, message=FALSE}
-library(sqldf)
-```
-
-and using sqldf we find the coverage: 
-
-```{r}
-sqldf("select count(*) from dat1000 where Means between 3.418861 and 6.581139")
-```
-
-So we have a 94.1% confidence level.
+I don't yet know how to create the 95% Confidence Level....
 
